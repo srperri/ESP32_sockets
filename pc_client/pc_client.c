@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <string.h> 
 #include <sys/time.h>
-
+#include "helpers.h"
 struct client_request{
   char type[3];
   char src_fname[20];
@@ -75,15 +75,18 @@ int main(int argc, char *argv[])
 	//DESCRIPTOR - DIRECCION - TAMAÑO DIRECCION
     if (connect(sockfd,(struct sockaddr *)&serv_addr,sizeof(serv_addr)) < 0) 
         error("ERROR connecting");
+	
 
     //LEE DEL ARCHIVO PARAMETRO 3 LA LONGITUD PASADA POR PARAMETRO 4 
     //Y LA GUARDA EN buffer_f
     // 1:hostname 2:port 3:[GET|PUT] 4:src_filename 5:<bytes> 6:<dst_filename> 7:<msg_bytes>\n", argv[0]);
+	request serv_req;
+	strcpy(serv_req.type,argv[3]);
 	if (strcmp(argv[3],"LS")==0) {
  		//ENVIA UN MENSAJE AL SOCKET CON LA LONGITUD A ENVIAR
 		char req_msg[255];
 		strcpy(req_msg, "LS ");
-		int n = write(sockfd,req_msg,strlen(req_msg));
+		int n = write(sockfd,&serv_req,sizeof(serv_req));
 		//n = write(sockfd,argv[4],strlen(argv[4]));
 		if (n < 0) 
 		     error("ERROR writing to socket");

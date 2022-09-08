@@ -11,7 +11,7 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiAP.h>
-#include "common.h"
+#include "helpers.h"
 #include "putfile.h"
 #include "getfile.h"
 //#include "writefile.h"
@@ -89,10 +89,10 @@ int waitCon(int sockfd){
 void recReq(int newsockfd, request *req){
     char buff[256];
     bzero(buff,256);    
-    int n = read(newsockfd,buff,255);                                        //LEE EL MENSAJE DEL CLIENTE CON LA LONGITUD
+    int n = read(newsockfd,req,sizeof(request));                                        //LEE EL MENSAJE DEL CLIENTE CON LA LONGITUD
     if (n < 0)
         perror("ERROR reading from socket");
-    request_from_char_array(req,buff);
+    //request_from_char_array(req,buff);
 }
 
 

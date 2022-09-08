@@ -1,8 +1,8 @@
-#include "Arduino.h"
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <string.h>
-#include "common.h"
+//#include "Arduino.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "helpers.h"
 
 void error(char *str){
     perror(str);
@@ -26,10 +26,3 @@ void request_from_char_array(request *req, char* str){
       } 
     }
 }
-// void error(String str){
-//     int len = str.length() + 1; 
-//     char msg[len];
-//     str.toCharArray(msg, len);
-//     perror(msg);
-//     exit(1);
-// }
