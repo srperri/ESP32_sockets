@@ -87,12 +87,9 @@ int waitCon(int sockfd){
 }
            
 void recReq(int newsockfd, request *req){
-    char buff[256];
-    bzero(buff,256);    
     int n = read(newsockfd,req,sizeof(request));                                        //LEE EL MENSAJE DEL CLIENTE CON LA LONGITUD
     if (n < 0)
         perror("ERROR reading from socket");
-    //request_from_char_array(req,buff);
 }
 
 
