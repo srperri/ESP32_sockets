@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include "FS.h"
-void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
+void ls(fs::FS &fs, const char * dirname, uint8_t levels){
     Serial.printf("Listing directory: %s\r\n", dirname);
 
     File root = fs.open(dirname);
@@ -19,7 +19,7 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
             Serial.print("  DIR : ");
             Serial.println(file.name());
             if(levels){
-                listDir(fs, file.name(), levels -1);
+                ls(fs, file.name(), levels -1);
             }
         } else {
             Serial.print("  FILE: ");
