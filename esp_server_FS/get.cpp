@@ -25,7 +25,7 @@ void get(int sockfd, serv_req *req)
         fread(buffer, sizeof(byte), msg_size, f);
         fixed_write(sockfd, buffer, msg_size, 1);
         sent_size += msg_size;
-        fixed_read(sockfd, &received_size, sizeof(received_size), 0); // ojo verificar si sizeof(long) depende de la arquitectura
+        fixed_read(sockfd, &received_size, sizeof(received_size), 0); 
     }
     fclose(f);
     free(buffer);

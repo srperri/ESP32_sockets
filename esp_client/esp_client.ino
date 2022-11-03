@@ -20,21 +20,30 @@
  *
  */
 
-void setWifi()
+void setWifiConn()
 {
+    Serial.print("\n\nConnecting to: ");
+    Serial.println(SSID);
+
     WiFi.begin(SSID, PASSWORD);
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(500);
         Serial.print(".");
     }
-    Serial.printf("\n WiFi connected\n IP address: %s\n", WiFi.localIP());
+    Serial.printf("\n WiFi connected\n");
+    digitalWrite(LED_BUILTIN, HIGH); // Turn the LED on
+
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+    Serial.print("Gateway IP: ");
+    Serial.println(WiFi.gatewayIP());
 }
 
 void cline_from_serial(cline_req *req)
 {
     char buffer[256];
-    uint8_t i = 0;
+    int i = 0;
     while (!Serial.available())
     {
         delay(100);
@@ -48,32 +57,6 @@ void cline_from_serial(cline_req *req)
     cline_req_from_char_array(req, buffer);
 }
 
-void setWifiConn()
-{
-    const char *ssid = "yourAP";
-    const char *password = "yourPassword";
-    // We start by connecting to a WiFi network
-
-    Serial.print("\n\nConnecting to: ");
-    Serial.println(ssid);
-
-    WiFi.begin(ssid, password);
-
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.print(".");
-    }
-
-    Serial.println("\n WiFi connected");
-    digitalWrite(LED_BUILTIN, HIGH); // Turn the LED on
-
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
-    Serial.print("Gateway IP: ");
-    Serial.println(WiFi.gatewayIP());
-}
-
 int socketConn(IPAddress ip, int port)
 {
     struct sockaddr_in serv_addr;
@@ -81,7 +64,7 @@ int socketConn(IPAddress ip, int port)
 
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
-        error("ERROR opening socket");
+        perror("ERROR opening socket");
 
     bzero((char *)&serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
@@ -93,7 +76,7 @@ int socketConn(IPAddress ip, int port)
     Serial.println("punto 3 ");
 
     if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-        error("ERROR connecting");
+        perror("ERROR connecting");
     return sockfd;
 }
 
@@ -141,6 +124,7 @@ int process_req(int sockfd, cline_req *cl_req)
     close(sockfd);
     return 0;
 }
+
 void setup()
 {
     pinMode(LED_BUILTIN, OUTPUT);
@@ -160,6 +144,10 @@ void setup()
         .max_files = 5,
         .format_if_mount_failed = true};
     esp_err_t ret = esp_vfs_spiffs_register(&conf);
+    while (Serial.available())
+    {
+        Serial.read();
+    }
 }
 
 void loop()
@@ -167,14 +155,16 @@ void loop()
     ls(SPIFFS, "/", 0);
     cline_req cl_req;
     cline_from_serial(&cl_req);
-    serv_req srv_req;
-
-    int sockfd = socketConn(inet_addr(cl_req.host), cl_req.port);
-    if (sockfd > 0)
+    if (*(cl_req.op))
     {
-        process_req(sockfd, &cl_req);
-        close(sockfd);
-        Serial.print(">");
-        delay(2000);
+        int sockfd;
+        sockfd = socketConn(inet_addr(cl_req.host), cl_req.port);
+        if (sockfd > 0)
+        {
+            process_req(sockfd, &cl_req);
+            close(sockfd);
+            Serial.print(">");
+            delay(2000);
+        }
     }
 }

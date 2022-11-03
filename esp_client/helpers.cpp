@@ -6,14 +6,7 @@
 #include <lwip/sockets.h>
 #include "helpers.h"
 
-void error(char *str)
-{
-    Serial.println(str);
-    perror(str);
-    exit(1);
-}
-
-void fixed_write(int sockfd, const void *buff, size_t buff_size, char verbose)
+void fixed_write(int sockfd, void *buff, size_t buff_size, char verbose)
 {
     int n, count = 0;
     if (verbose)
@@ -22,7 +15,7 @@ void fixed_write(int sockfd, const void *buff, size_t buff_size, char verbose)
     {
         n = write(sockfd, buff + count, buff_size - count);
         if (n < 0)
-            error("ERROR writing to socket");
+            perror("ERROR writing to socket");
         count += n;
         if (verbose)
             printf("->%ld", (long unsigned)n);
@@ -40,7 +33,7 @@ void fixed_read(int sockfd, void *buff, size_t buff_size, char verbose)
     {
         n = read(sockfd, buff + count, buff_size - count);
         if (n < 0)
-            error("ERROR reading from socket");
+            perror("ERROR reading from socket");
         count += n;
         if (verbose)
             printf("->%ld", (long unsigned)n);
@@ -105,10 +98,3 @@ char *full_path(char *fname)
     strcat(full_path_fname, fname);
     return full_path_fname;
 }
-// void error(String str){
-//     int len = str.length() + 1;
-//     char msg[len];
-//     str.toCharArray(msg, len);
-//     perror(msg);
-//     exit(1);
-// }

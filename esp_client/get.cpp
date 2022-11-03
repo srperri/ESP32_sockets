@@ -15,16 +15,18 @@ void get(int sockfd, cline_req *cl_req)
     // ENVIA EL REQUEST
     fixed_write(sockfd, &serv_req, sizeof(serv_req), 0);
 
-    // ABRE EL ARCHIVO PARAMETRO #6:dst_filename
+    // ABRE EL ARCHIVO DESTINO
     FILE *f;
     f = fopen(full_path(strlen(cl_req->dst_fname) ? cl_req->dst_fname : cl_req->src_fname), "wb");
     if (f == NULL)
-        error("Error opening file");
+        perror("Error opening file");
 
-    // DEFINE VARIABLES PARA CONTAR LOS BYTES ENVIADOS, EL TAMAÑO DEL ENVIO ACTUAL, Y TIEMPOS
+    // DEFINE VARIABLES PARA CONTAR LOS BYTES RECIBIDOS, EL TAMAÑO DEL ENVIO ACTUAL, Y TIEMPOS
     uint32_t received_size = 0;
     uint32_t msg_size;
+    uint32_t written_size;
     void *buffer = malloc(serv_req.msg_len);
+    //void *buffer[serv_req.msg_len];
 
     Serial.printf("start receiving \n");
     while (received_size < serv_req.total_len)
@@ -33,7 +35,8 @@ void get(int sockfd, cline_req *cl_req)
         fixed_read(sockfd, buffer, msg_size, 1);
         received_size += msg_size;
         fixed_write(sockfd, &received_size, sizeof(received_size), 0);
-        fwrite(buffer, sizeof(char), msg_size, f);
+        written_size=fwrite(buffer, sizeof(char), msg_size, f);
+        Serial.printf("\n written bytes: %lu\n", (unsigned long)written_size);
     }
     free(buffer);
     Serial.printf("\nTotal received bytes: %lu\n", (unsigned long)received_size);

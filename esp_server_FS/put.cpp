@@ -23,8 +23,8 @@ void put(int sockfd, serv_req *req)
         msg_size = (req->total_len - received_size > req->msg_len ? req->msg_len : req->total_len - received_size);
         fixed_read(sockfd, buffer, msg_size, 1);
         received_size += msg_size;
-        fixed_write(sockfd, &received_size, sizeof(received_size), 0); // ojo verificar si sizeof(long) depende de la arquitectura
-        fwrite(buffer, sizeof(byte), msg_size, f);
+        fixed_write(sockfd, &received_size, sizeof(received_size), 0); 
+        fwrite(buffer, sizeof(byte), msg_size, f);//COMENTAR ESTA LINEA PARA TESTEAR SIN PERSISTENCIA
     }
     fclose(f);
     free(buffer);

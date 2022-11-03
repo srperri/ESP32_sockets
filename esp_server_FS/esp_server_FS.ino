@@ -53,7 +53,7 @@ int waitCon(int sockfd)
     socklen_t clilen = sizeof(cli_addr);
     newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen); // SE BLOQUEA A ESPERAR UNA CONEXION
     if (newsockfd < 0)
-        error("ERROR on accept");
+        perror("ERROR on accept");
     return newsockfd;
 }
 

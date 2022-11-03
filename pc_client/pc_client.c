@@ -15,7 +15,7 @@
 
 int main(int argc, char *argv[])
 {
-	int sockfd, portno, n, count;
+	int sockfd, portno;
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
 	if (argc < 4 || (strcmp(argv[3], "GET") != 0 && strcmp(argv[3], "PUT") != 0 && strcmp(argv[3], "RM") != 0 && strcmp(argv[3], "LS") != 0))
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	// SOCK_STREAM - TIPO DE SOCKET
 
 	if (sockfd < 0)
-		error("ERROR opening socket");
+		perror("ERROR opening socket");
 
 	// TOMA LA DIRECCION DEL SERVER DE LOS ARGUMENTOS
 	server = gethostbyname(argv[1]);
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
 	// DESCRIPTOR - DIRECCION - TAMAÑO DIRECCION
 	if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-		error("ERROR connecting");
+		perror("ERROR connecting");
 
 	// LEE DEL ARCHIVO PARAMETRO 3 LA LONGITUD PASADA POR PARAMETRO 4
 	// Y LA GUARDA EN buffer
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 		FILE *f;
 		f = fopen(argv[(argc > 6 ? 6 : 4)], "wb");
 		if (f == NULL)
-			error("Error opening file");
+			perror("Error opening file");
 
 		// DEFINE VARIABLES PARA CONTAR LOS BYTES RECIBIDOS, EL TAMAÑO MAXIMO POR ENVIO, Y TIEMPOS
 		uint32_t received_size = 0;
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 		FILE *f, *f_rtt;
 		f = fopen(argv[4], "rb");
 		if (f == NULL)
-			error("Error opening file");
+			perror("Error opening file");
 
 		// DEFINE VARIABLES PARA CONTAR LOS BYTES RECIBIDOS, EL TAMAÑO MAXIMO POR ENVIO, Y TIEMPOS
 		uint32_t sent_size = 0;

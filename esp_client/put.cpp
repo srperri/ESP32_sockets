@@ -15,13 +15,13 @@ void put(int sockfd, cline_req *cl_req)
     // ENVIA EL REQUEST
     fixed_write(sockfd, &serv_req, sizeof(serv_req), 0);
 
-    // ABRE EL ARCHIVO PARAMETRO #4:src_filename
+    // ABRE EL ARCHIVO ORIGEN
     FILE *f;
     f = fopen(full_path(cl_req->src_fname), "rb");
     if (f == NULL)
-        error("Error opening file");
+        perror("Error opening file");
 
-    // DEFINE VARIABLES PARA CONTAR LOS BYTES RECIBIDOS, EL TAMAÑO DEL ENVIO ACTUAL, Y TIEMPOS
+    // DEFINE VARIABLES PARA CONTAR LOS BYTES ENVIADOS, EL TAMAÑO DEL ENVIO ACTUAL, Y TIEMPOS
     uint32_t sent_size = 0;
     uint32_t msg_size;
     void *buffer = malloc(serv_req.msg_len);

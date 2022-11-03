@@ -23,9 +23,8 @@ typedef struct serv_req
   char fname[FNAME_LEN];
   uint32_t msg_len;
 };
-void error(char *);
 
-void fixed_write(int sockfd, const void *buff, size_t buff_size, char verbose);
+void fixed_write(int sockfd, void *buff, size_t buff_size, char verbose);
 
 void fixed_read(int sockfd, void *buff, size_t buff_size, char verbose);
 
